@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison_Ban", "Bison_Ban.csproj", "{EC7F3B7C-1E9F-47FA-B7BB-AD406034D0F4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC7F3B7C-1E9F-47FA-B7BB-AD406034D0F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC7F3B7C-1E9F-47FA-B7BB-AD406034D0F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC7F3B7C-1E9F-47FA-B7BB-AD406034D0F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC7F3B7C-1E9F-47FA-B7BB-AD406034D0F4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3BC4E6E3-BC10-448B-AE84-8D897BEAE1F4}
+	EndGlobalSection
+EndGlobal
