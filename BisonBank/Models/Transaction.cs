@@ -1,4 +1,7 @@
-﻿namespace BisonBank.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace BisonBank.Models
 {
     public class Transaction
     {
@@ -7,6 +10,9 @@
         public string origin { get; set; }
         public string destination { get; set; }
         public DateTime date { get; set; }
+
+        [DataType(DataType.Currency)]
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal amount { get; set; }
     }
 }

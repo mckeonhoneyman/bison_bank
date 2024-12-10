@@ -6,7 +6,7 @@ namespace BisonBank.Models
         public int userID { get; set; }
         public string firstName { get; set; }
         public string lastName { get; set; }
-        public Account[] accounts { get; set; }
+        public List<Account> accounts { get; set; }
         public Statement statement { get; set; }
     }
 }
