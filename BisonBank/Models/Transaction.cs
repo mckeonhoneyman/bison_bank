@@ -14,5 +14,6 @@ namespace BisonBank.Models
         [DataType(DataType.Currency)]
         [Column(TypeName = "decimal(18, 2)")]
         public decimal amount { get; set; }
+        public string accountNumber { get; set; }
     }
 }

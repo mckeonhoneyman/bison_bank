@@ -18,5 +18,6 @@ namespace BisonBank.Models
         [Column(TypeName = "decimal(18, 2)")]
         public decimal interest { get; set; }
         public List<Transaction> transactions { get; set;}
+        public string userID { get; set; }
     }
 }
