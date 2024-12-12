@@ -1,0 +1,64 @@
+﻿@page "/accounts/create"
+@using Microsoft.EntityFrameworkCore
+@using BisonBank.Models
+@inject IDbContextFactory<BisonBank.Data.BisonBankContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Account</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Account" OnValidSubmit="AddAccount" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <label for="balance" class="form-label">balance:</label> 
+                <InputNumber id="balance" @bind-Value="Account.balance" class="form-control" /> 
+                <ValidationMessage For="() => Account.balance" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="accountnumber" class="form-label">accountNumber:</label> 
+                <InputNumber id="accountnumber" @bind-Value="Account.accountNumber" class="form-control" /> 
+                <ValidationMessage For="() => Account.accountNumber" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="routingnumber" class="form-label">routingNumber:</label> 
+                <InputNumber id="routingnumber" @bind-Value="Account.routingNumber" class="form-control" /> 
+                <ValidationMessage For="() => Account.routingNumber" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="datecreated" class="form-label">dateCreated:</label> 
+                <InputDate id="datecreated" @bind-Value="Account.dateCreated" class="form-control" /> 
+                <ValidationMessage For="() => Account.dateCreated" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="interest" class="form-label">interest:</label> 
+                <InputNumber id="interest" @bind-Value="Account.interest" class="form-control" /> 
+                <ValidationMessage For="() => Account.interest" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/accounts">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Account Account { get; set; } = new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddAccount()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Account.Add(Account);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/accounts");
+    }
+}

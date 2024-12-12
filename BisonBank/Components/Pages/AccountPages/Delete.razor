@@ -1,0 +1,71 @@
+﻿@page "/accounts/delete"
+@using Microsoft.EntityFrameworkCore
+@using BisonBank.Models
+@inject IDbContextFactory<BisonBank.Data.BisonBankContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<p>Are you sure you want to delete this?</p>
+<div>
+    <h2>Account</h2>
+    <hr />
+    @if (account is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">balance</dt>
+            <dd class="col-sm-10">@account.balance</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">accountNumber</dt>
+            <dd class="col-sm-10">@account.accountNumber</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">routingNumber</dt>
+            <dd class="col-sm-10">@account.routingNumber</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">dateCreated</dt>
+            <dd class="col-sm-10">@account.dateCreated</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">interest</dt>
+            <dd class="col-sm-10">@account.interest</dd>
+        </dl>
+        <EditForm method="post" Model="account" OnValidSubmit="DeleteAccount" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(account is null)">Delete</button> |
+            <a href="/accounts">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private Account? account;
+
+    [SupplyParameterFromQuery]
+    private int accountID { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        account = await context.Account.FirstOrDefaultAsync(m => m.accountID == accountID);
+
+        if (account is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    private async Task DeleteAccount()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Account.Remove(account!);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/accounts");
+    }
+}

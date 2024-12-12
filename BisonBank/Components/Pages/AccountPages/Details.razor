@@ -1,0 +1,54 @@
+﻿@page "/accounts/details"
+@using Microsoft.EntityFrameworkCore
+@using BisonBank.Models
+@inject IDbContextFactory<BisonBank.Data.BisonBankContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Account</h2>
+    <hr />
+    @if (account is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Balance</dt>
+            <dd class="col-sm-10">@account.balance</dd>
+            <dt class="col-sm-2">Account Number</dt>
+            <dd class="col-sm-10">@account.accountNumber</dd>
+            <dt class="col-sm-2">Routing Number</dt>
+            <dd class="col-sm-10">@account.routingNumber</dd>
+            <dt class="col-sm-2">Open Date</dt>
+            <dd class="col-sm-10">@account.dateCreated</dd>
+            <dt class="col-sm-2">Interest Rate</dt>
+            <dd class="col-sm-10">@account.interest</dd>
+        </dl>
+        <div>
+            <a href="@($"/accounts/edit?accountid={account.accountID}")">Edit</a> |
+            <a href="@($"/accounts")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Account? account;
+
+    [SupplyParameterFromQuery]
+    private int accountID { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        account = await context.Account.FirstOrDefaultAsync(m => m.accountID == accountID);
+
+        if (account is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

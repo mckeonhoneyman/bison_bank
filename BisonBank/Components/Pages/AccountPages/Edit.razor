@@ -1,0 +1,109 @@
+﻿@page "/accounts/edit"
+@using Microsoft.EntityFrameworkCore
+@using BisonBank.Models
+@inject IDbContextFactory<BisonBank.Data.BisonBankContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Account</h2>
+<hr />
+@if (Account is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Account" OnValidSubmit="UpdateAccount" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Account.accountID" value="@Account.accountID" />
+                <div class="mb-3">
+                    <label for="balance" class="form-label">balance:</label>
+                    <InputNumber id="balance" @bind-Value="Account.balance" class="form-control" />
+                    <ValidationMessage For="() => Account.balance" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="accountnumber" class="form-label">accountNumber:</label>
+                    <InputNumber id="accountnumber" @bind-Value="Account.accountNumber" class="form-control" />
+                    <ValidationMessage For="() => Account.accountNumber" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="routingnumber" class="form-label">routingNumber:</label>
+                    <InputNumber id="routingnumber" @bind-Value="Account.routingNumber" class="form-control" />
+                    <ValidationMessage For="() => Account.routingNumber" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="datecreated" class="form-label">dateCreated:</label>
+                    <InputDate id="datecreated" @bind-Value="Account.dateCreated" class="form-control" />
+                    <ValidationMessage For="() => Account.dateCreated" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="interest" class="form-label">interest:</label>
+                    <InputNumber id="interest" @bind-Value="Account.interest" class="form-control" />
+                    <ValidationMessage For="() => Account.interest" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/accounts">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int accountID { get; set; }
+
+    [SupplyParameterFromForm]
+    private Account? Account { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Account ??= await context.Account.FirstOrDefaultAsync(m => m.accountID == accountID);
+
+        if (Account is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateAccount()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Account!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!AccountExists(Account!.accountID))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/accounts");
+    }
+
+    private bool AccountExists(int accountid)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Account.Any(e => e.accountID == accountid);
+    }
+}
