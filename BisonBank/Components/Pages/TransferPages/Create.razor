@@ -1,0 +1,150 @@
+﻿@page "/transfers/create"
+@using Microsoft.EntityFrameworkCore
+@using BisonBank.Models
+@inject IDbContextFactory<BisonBank.Data.BisonBankContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>New Transfer</PageTitle>
+
+<h1>New Transfer</h1>
+
+<h2>Transfer</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Transfer" OnValidSubmit="AddTransfer" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+
+            @if (showAccountError)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @((MarkupString)errorMessage)
+                </div>
+            }      
+            <div class="mb-3">
+                <label for="originaccount" class="form-label">From Account:</label> 
+                <InputSelect id="originaccount" @bind-Value="Transfer.originAccount" class="form-control">
+                    <option value="">Select</option>
+                    <option value="Checking">Checking</option>
+                    <option value="Savings">Savings</option>
+                </InputSelect>
+                <ValidationMessage For="() => Transfer.originAccount" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="destinationaccount" class="form-label">To Account:</label> 
+                <InputSelect id="destinationaccount" @bind-Value="Transfer.destinationAccount" class="form-control">
+                    <option value="">Select</option>
+                    <option value="Checking">Checking</option>
+                    <option value="Savings">Savings</option>
+                </InputSelect> 
+                <ValidationMessage For="() => Transfer.destinationAccount" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="amount" class="form-label">Transfer Amount:</label> 
+                <InputNumber id="amount" @bind-Value="Transfer.amount" class="form-control" /> 
+                <ValidationMessage For="() => Transfer.amount" class="text-danger" /> 
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Memo:</label> 
+                <InputText id="description" @bind-Value="Transfer.description" class="form-control" /> 
+                <ValidationMessage For="() => Transfer.description" class="text-danger" /> 
+            </div>  
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/transfers">Return to Transfer History</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Transfer Transfer { get; set; } = new();
+
+    private bool showAccountError = false;
+    private string errorMessage = "";
+
+    protected override void OnInitialized()
+    {
+        // Automatically set the current date and time using Coordinated Universal Time (UTC)
+        Transfer.date = DateTime.Now;
+        Transfer.transactionType = "Transfer";
+    }
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddTransfer()
+    {
+        // Check to ensure origin and destination accounts are not the same
+        if (Transfer.originAccount == Transfer.destinationAccount && !string.IsNullOrEmpty(Transfer.originAccount))
+        {
+            showAccountError = true;
+            errorMessage = $"You cannot transfer funds between the same account type ({Transfer.originAccount}). Please select a different destination account.";
+            return;
+        }
+
+        // Reset error if accounts are different
+        showAccountError = false;
+        errorMessage = "";
+
+        using var context = DbFactory.CreateDbContext();
+
+        try
+        {
+            // Find the user's account based on the origin account type
+            var originAccount = await context.Account
+                .FirstOrDefaultAsync(a => a.accountType == Transfer.originAccount);
+
+            // Check if the account exists
+            if (originAccount == null)
+            {
+                showAccountError = true;
+                errorMessage = $"Origin account ({Transfer.originAccount}) not found.";
+                return;
+            }
+
+            // Check for sufficient funds
+            if (originAccount.balance < Transfer.amount)
+            {
+                showAccountError = true;
+                errorMessage = $"Insufficient funds.<br>Current balance: ${originAccount.balance:N2}<br>" +
+                               $"Transfer amount: ${Transfer.amount:N2}";
+
+                return;
+            }
+
+            // Deduct the amount from the origin account
+            originAccount.balance -= Transfer.amount;
+
+            // Find the destination account
+            var destinationAccount = await context.Account
+                 .FirstOrDefaultAsync(a => a.accountType == Transfer.destinationAccount);
+
+            // Check if destination account exists
+            if (destinationAccount == null)
+            {
+                showAccountError = true;
+                errorMessage = $"Destination account ({Transfer.destinationAccount}) not found.";
+                return;
+            }
+
+            // Add amount to destination account
+            destinationAccount.balance += Transfer.amount;
+
+            // Update both accounts and add transfer
+            context.Account.Update(originAccount);
+            context.Account.Update(destinationAccount);
+            context.Transfer.Add(Transfer);
+
+            // Save changes in a single transaction
+            await context.SaveChangesAsync();
+
+        }
+        catch (Exception ex)
+        {
+            showAccountError = true;
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+    }
+}

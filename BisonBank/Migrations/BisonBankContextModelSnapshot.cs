@@ -30,8 +30,13 @@ namespace BisonBank.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("accountID"));
 
-                    b.Property<int>("accountNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("accountNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("accountType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("balance")
                         .HasColumnType("decimal(18, 2)");
@@ -42,10 +47,7 @@ namespace BisonBank.Migrations
                     b.Property<decimal>("interest")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<int>("routingNumber")
-                        .HasColumnType("int");
-
-                    b.Property<string>("userID")
+                    b.Property<string>("routingNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -62,28 +64,22 @@ namespace BisonBank.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("transactionID"));
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
+
                     b.Property<int?>("accountID")
                         .HasColumnType("int");
-
-                    b.Property<string>("accountNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("amount")
                         .HasColumnType("decimal(18, 2)");
 
                     b.Property<DateTime>("date")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("destination")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("origin")
+                    b.Property<string>("transactionType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -92,6 +88,46 @@ namespace BisonBank.Migrations
                     b.HasIndex("accountID");
 
                     b.ToTable("Transaction");
+
+                    b.HasDiscriminator().HasValue("Transaction");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("BisonBank.Models.Transfer", b =>
+                {
+                    b.HasBaseType("BisonBank.Models.Transaction");
+
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("destinationAccount")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("originAccount")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasDiscriminator().HasValue("Transfer");
+                });
+
+            modelBuilder.Entity("BisonBank.Models.Withdrawal", b =>
+                {
+                    b.HasBaseType("BisonBank.Models.Transaction");
+
+                    b.Property<string>("originAccount")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("Transaction", t =>
+                        {
+                            t.Property("originAccount")
+                                .HasColumnName("Withdrawal_originAccount");
+                        });
+
+                    b.HasDiscriminator().HasValue("Withdrawal");
                 });
 
             modelBuilder.Entity("BisonBank.Models.Transaction", b =>
