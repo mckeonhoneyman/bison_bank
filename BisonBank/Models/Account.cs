@@ -10,14 +10,15 @@ namespace BisonBank.Models
         [DataType(DataType.Currency)]
         [Column(TypeName = "decimal(18, 2)")]
         public decimal balance { get; set; }
-        public int accountNumber { get; set; }
-        public int routingNumber { get; set; }
+        public string accountNumber { get; set; }
+        public string routingNumber { get; set; }
         public DateTime dateCreated { get; set; }
+
+        public string accountType { get; set; }
 
         [DataType(DataType.Currency)]
         [Column(TypeName = "decimal(18, 2)")]
         public decimal interest { get; set; }
         public List<Transaction> transactions { get; set;}
-        public string userID { get; set; }
     }
 }

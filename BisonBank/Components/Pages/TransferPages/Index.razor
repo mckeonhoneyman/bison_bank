@@ -1,0 +1,55 @@
+﻿@page "/transfers"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BisonBank.Models
+@using BisonBank.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BisonBank.Data.BisonBankContext> DbFactory
+
+<PageTitle>Transfers</PageTitle>
+
+<h1>Transfers</h1>
+
+<p>
+    <a href="transfers/create">New Transfer</a>
+</p>
+
+<QuickGrid Class="my-grid" Items="context.Transfer">
+
+    <TemplateColumn Title="Origin Account" Context="transfer" Sortable="true">
+        @transfer.originAccount
+    </TemplateColumn>
+
+    <TemplateColumn Title="Destination Account" Context="transfer" Sortable="true">
+        @transfer.destinationAccount
+    </TemplateColumn>
+
+    <TemplateColumn Title="Transaction Amount" Context="transfer" Sortable="true">
+        @transfer.amount.ToString("C")
+    </TemplateColumn>
+
+    <TemplateColumn Title="Transaction Date" Context="transfer" Sortable="true">
+        @transfer.date.ToString("MM-dd-yyyy")
+    </TemplateColumn>
+
+    <TemplateColumn Title="Memo" Context="transfer" Sortable="true">
+        @transfer.description
+    </TemplateColumn>
+
+    <TemplateColumn Context="transfer">
+        <a href="@($"transfers/details?transactionid={transfer.transactionID}")">Details</a> | 
+        <a href="@($"transfers/edit?transactionid={transfer.transactionID}")">Edit</a>
+    </TemplateColumn>
+</QuickGrid>
+
+
+@code {
+    private BisonBankContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

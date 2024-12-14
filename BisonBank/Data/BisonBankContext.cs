@@ -15,5 +15,8 @@ namespace BisonBank.Data
         }
 
         public DbSet<BisonBank.Models.Account> Account { get; set; } = default!;
+        public DbSet<BisonBank.Models.Transaction> Transaction { get; set; } = default!;
+        public DbSet<BisonBank.Models.Transfer> Transfer { get; set; } = default!;
+        public DbSet<BisonBank.Models.Withdrawal> Withdrawal { get; set; } = default!;
     }
 }

@@ -6,43 +6,35 @@
 @implements IAsyncDisposable
 @inject IDbContextFactory<BisonBank.Data.BisonBankContext> DbFactory
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Accounts</PageTitle>
 
-<h1>Index</h1>
+<h1>Accounts</h1>
 
-@if (context.Account == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Balance</th>
-                <th>Account Number</th>
-                <th>Routing Number</th>
-                <th>Open Date</th>
-                <th>Interest Rate</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var account in context.Account)
-            {
-                <tr>
-                    <td>@account.balance</td>
-                    <td>@account.accountNumber</td>
-                    <td>@account.routingNumber</td>
-                    <td>@account.dateCreated</td>
-                    <td>@account.interest</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+<QuickGrid Class="my-grid" Items="context.Account">
+
+    <TemplateColumn Title="Account Number" Context="account" Sortable="true">
+        @account.accountNumber
+    </TemplateColumn>
+
+    <TemplateColumn Title="Routing Number" Context="account" Sortable="true">
+        @account.routingNumber
+    </TemplateColumn>
+
+    <TemplateColumn Title="Balance" Context="account" Sortable="true">
+        @account.balance.ToString("C")
+    </TemplateColumn>
+
+    <TemplateColumn Title="Interest Rate" Context="account" Sortable="true">
+        @account.interest
+    </TemplateColumn>
+
+    <TemplateColumn Title="Account Opened" Context="account" Sortable="true">
+        @account.dateCreated.ToString("MM-dd-yyyy")
+    </TemplateColumn>
+
+</QuickGrid>
 
 @code {
-
     private BisonBankContext context = default!;
 
     protected override void OnInitialized()
