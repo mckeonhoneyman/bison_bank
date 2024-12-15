@@ -8,7 +8,6 @@
 
 <h1>New Transfer</h1>
 
-<h2>Transfer</h2>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -131,6 +130,23 @@
 
             // Add amount to destination account
             destinationAccount.balance += Transfer.amount;
+
+            // Store the new account balances in the transaction
+            if (originAccount.accountType == "Checking")
+            {
+                Transfer.checkingAccountNewBalance = originAccount.balance;
+                Transfer.savingsAccountNewBalance = destinationAccount.balance;
+                Transfer.savingsAddOrSubtract = "Add";
+                Transfer.checkingAddOrSubtract = "Subtract";
+            }
+
+            else if (originAccount.accountType == "Savings")
+            {
+                Transfer.savingsAccountNewBalance = originAccount.balance;
+                Transfer.checkingAccountNewBalance = destinationAccount.balance;
+                Transfer.savingsAddOrSubtract = "Subtract";
+                Transfer.checkingAddOrSubtract = "Add";
+            }
 
             // Update both accounts and add transfer
             context.Account.Update(originAccount);

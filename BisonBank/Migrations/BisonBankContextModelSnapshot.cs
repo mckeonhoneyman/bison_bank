@@ -75,9 +75,35 @@ namespace BisonBank.Migrations
                     b.Property<decimal>("amount")
                         .HasColumnType("decimal(18, 2)");
 
+                    b.Property<decimal>("checkingAccountNewBalance")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("checkingAddOrSubtract")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("date")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("destinationAccount")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("originAccount")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("savingsAccountNewBalance")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("savingsAddOrSubtract")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("transactionType")
                         .IsRequired()
@@ -98,34 +124,12 @@ namespace BisonBank.Migrations
                 {
                     b.HasBaseType("BisonBank.Models.Transaction");
 
-                    b.Property<string>("description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("destinationAccount")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("originAccount")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasDiscriminator().HasValue("Transfer");
                 });
 
             modelBuilder.Entity("BisonBank.Models.Withdrawal", b =>
                 {
                     b.HasBaseType("BisonBank.Models.Transaction");
-
-                    b.Property<string>("originAccount")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.ToTable("Transaction", t =>
-                        {
-                            t.Property("originAccount")
-                                .HasColumnName("Withdrawal_originAccount");
-                        });
 
                     b.HasDiscriminator().HasValue("Withdrawal");
                 });

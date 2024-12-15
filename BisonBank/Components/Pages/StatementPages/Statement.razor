@@ -1,8 +1,101 @@
-﻿@page "/bank_statement"
+﻿@page "/bank_statement/current_statement/checking_account"
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BisonBank.Models
+@using BisonBank.Data
+@using iText.Kernel.Pdf
+@using iText.Layout
+@using iText.Layout.Element
+@using iText.Layout.Properties
+@using System.IO
+@implements IAsyncDisposable
+@inject IDbContextFactory<BisonBank.Data.BisonBankContext> DbFactory
+@inject IJSRuntime JSRuntime
 
-<h3>Bank Statement</h3>
+<PageTitle>Bank Statement</PageTitle>
+
+<h1>Bank Statement</h1>
+
+<!-- Button not yet functional -->
+<button class="btn btn-primary">Export to PDF</button>
+
+<div class="paper-style">
+    <div class="bank-info">
+        <h2>Bison Bank</h2>
+        <p>123 Main Street, Fargo, ND 58102</p>
+        <p>Phone: (555) 123-4567</p>
+    </div>
+
+    <div class="statement-info">
+        <strong>Statement Period:</strong> @DateTime.Now.ToString("MMMM yyyy")
+    </div>
+
+    <div class="account-holder-info">
+        <strong>Account Holder:</strong><br>
+        John Doe<br>
+        456 Elm Street<br>
+        Fargo, ND 58102
+    </div>
+
+    <QuickGrid Items="FilteredTransactions" TGridItem="Transaction" Class="transaction-grid">
+
+        <!-- Date Column -->
+        <TemplateColumn Title="Date" Context="transaction" Sortable="true">
+            @transaction.date.ToString("MM/dd/yyyy")
+        </TemplateColumn>
+
+        <!-- Description Column -->
+        <TemplateColumn Title="Description" Context="transaction" Sortable="true">
+            @transaction.description
+        </TemplateColumn>
+
+        <!-- Transaction Type Column -->
+        <TemplateColumn Title="Transaction Type" Context="transaction" Sortable="true">
+            @transaction.transactionType
+        </TemplateColumn>
+
+        <!-- Amount Column -->
+        <TemplateColumn Title="Amount" Context="transaction" Sortable="true">
+            <span style="color: @(transaction.checkingAddOrSubtract == "Subtract" ? "red" : "black")">
+                @(transaction.checkingAddOrSubtract == "Subtract" ? "-" : "")@transaction.amount.ToString("C")
+            </span>
+        </TemplateColumn>
+
+        <!-- New Balance Column -->
+        <TemplateColumn Title="Balance" Context="transaction" Sortable="true">
+            @transaction.checkingAccountNewBalance.ToString("C")
+        </TemplateColumn>
+
+    </QuickGrid>
+</div>
 
 @code {
 
+    private BisonBankContext context = default!;
+    private IQueryable<Transaction> FilteredTransactions = Enumerable.Empty<Transaction>().AsQueryable();
+
+    protected override async Task OnInitializedAsync()
+    {
+        context = DbFactory.CreateDbContext();
+
+        // Filter transactions where origin or destination account is 'Checking'
+        FilteredTransactions = context.Transaction
+                              .Where(t => t.originAccount == "Checking" || t.destinationAccount == "Checking")
+                              .OrderBy(t => t.date);
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
 }
+
+<style>
+    .paper-style {
+        background-color: #fff; /* White background to simulate paper */
+        border: 1px solid #ccc; /* Light gray border for the paper outline */
+        border-radius: 8px; /* Slight rounding for the corners */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        padding: 20px; /* Padding inside the paper */
+        margin: 20px auto; /* Centering and spacing */
+        max-width: 800px; /* Limit the width to make it look like a page */
+        font-family: 'Arial', sans-serif; /* Clean font for readability */
+    }
+</style>
