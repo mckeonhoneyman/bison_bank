@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BisonBank.Migrations
 {
     [DbContext(typeof(BisonBankContext))]
-    [Migration("20241214184849_Create")]
+    [Migration("20241217190853_Create")]
     partial class Create
     {
         /// <inheritdoc />
