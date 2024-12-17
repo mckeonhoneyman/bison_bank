@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bison Bank</title>
+    <base href="/" />
+    <!-- Add CSS styles -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <!-- Placeholder for the Blazor app -->
+    <div id="app">Loading...</div>
+
+    <!-- Include Blazor WebAssembly framework -->
+    <script src="_framework/blazor.webassembly.js"></script>
+
+    <!-- Embedded JavaScript for handling PDF download -->
+    <script>
+        function downloadPdf(fileName, base64Data) {
+            try {
+                // Create a link element
+                const link = document.createElement('a');
+                // Set the download attribute with the desired filename
+                link.download = fileName;
+                // Set the link href to the Base64 PDF data
+                link.href = 'data:application/pdf;base64,' + base64Data;
+                // Trigger the download by simulating a click
+                link.click();
+            } catch (error) {
+                console.error('Error downloading the PDF:', error);
+                alert('Failed to download the PDF. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

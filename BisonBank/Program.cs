@@ -2,8 +2,12 @@ using BisonBank.Components;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using BisonBank.Data;
+using Syncfusion.Licensing;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+// Configure the database context
 builder.Services.AddDbContextFactory<BisonBankContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BisonBankContext") ?? throw new InvalidOperationException("Connection string 'BisonBankContext' not found.")));
 
@@ -11,13 +15,18 @@ builder.Services.AddQuickGridEntityFrameworkAdapter();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// Add services to the container.
+// Add services to the container
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    SeedData.Initialize(services);
+}
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);

@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>f850413c-c6e9-43d7-9d12-e760b4b54ae8</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +23,11 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
     <PackageReference Include="PDFsharp" Version="6.0.0" />
+    <PackageReference Include="Syncfusion.Blazor" Version="28.1.33" />
+    <PackageReference Include="Syncfusion.Blazor.Core" Version="28.1.33" />
+    <PackageReference Include="Syncfusion.Licensing" Version="28.1.33" />
+    <PackageReference Include="Syncfusion.Pdf.Net.Core" Version="28.1.33" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
 
 </Project>

@@ -12,9 +12,9 @@
 @inject IDbContextFactory<BisonBank.Data.BisonBankContext> DbFactory
 @inject IJSRuntime JSRuntime
 
-<PageTitle>Bank Statement</PageTitle>
+<PageTitle>Checking Statement</PageTitle>
 
-<h1>Bank Statement</h1>
+<h1>Checking Statement</h1>
 
 <!-- Button not yet functional -->
 <button class="btn btn-primary">Export to PDF</button>
@@ -22,7 +22,7 @@
 <div class="paper-style">
     <div class="bank-info">
         <h2>Bison Bank</h2>
-        <p>123 Main Street, Fargo, ND 58102</p>
+        <p>1234 Main Street, Fargo, ND 58103</p>
         <p>Phone: (555) 123-4567</p>
     </div>
 
@@ -34,7 +34,7 @@
         <strong>Account Holder:</strong><br>
         John Doe<br>
         456 Elm Street<br>
-        Fargo, ND 58102
+        Fargo, ND 58103
     </div>
 
     <QuickGrid Items="FilteredTransactions" TGridItem="Transaction" Class="transaction-grid">
