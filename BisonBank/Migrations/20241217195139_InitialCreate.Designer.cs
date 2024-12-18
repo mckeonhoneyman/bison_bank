@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BisonBank.Migrations
 {
     [DbContext(typeof(BisonBankContext))]
-    [Migration("20241217190853_Create")]
-    partial class Create
+    [Migration("20241217195139_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -1,4 +1,4 @@
-﻿@page "/logout"
+﻿@page "/leave"
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Mvc.Razor
 
@@ -14,13 +14,13 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Log Out Confirmation</h5>
+                    <h5 class="modal-title">Leave Page Confirmation</h5>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to log out?</p>
+                    <p>Are you sure you want to leave page?</p>
                 </div>
             <div class="modal-footer">
-                    <a href="/login" class="btn btn-danger" style="margin-right: 10px">Yes</a>
+                <a href="about:blank" class="btn btn-danger" style="margin-right: 10px">Yes</a>
                     <a href="/" class="btn btn-secondary">No</a>
                 </div>
             </div>
