@@ -10,38 +10,38 @@
 
 <h1>Transfers</h1>
 
-<p>
-    <a href="transfers/create">New Transfer</a>
-</p>
+<div class="button-container">
+    <p>
+        <button class="custom-button" onclick="window.location.href='transfers/create'">
+            New Transfer
+        </button>
+    </p>
+</div>
 
-<QuickGrid Class="my-grid" Items="context.Transfer">
+<div class="paper-style">
+    <QuickGrid Items="context.Transfer" TGridItem="Transaction" Class="transaction-grid">
+        <TemplateColumn Title="Origin Account" Context="transfer" Sortable="true">
+            @transfer.originAccount
+        </TemplateColumn>
 
-    <TemplateColumn Title="Origin Account" Context="transfer" Sortable="true">
-        @transfer.originAccount
-    </TemplateColumn>
+        <TemplateColumn Title="Destination Account" Context="transfer" Sortable="true">
+            @transfer.destinationAccount
+        </TemplateColumn>
 
-    <TemplateColumn Title="Destination Account" Context="transfer" Sortable="true">
-        @transfer.destinationAccount
-    </TemplateColumn>
+        <TemplateColumn Title="Transaction Amount" Context="transfer" Sortable="true">
+            @transfer.amount.ToString("C")
+        </TemplateColumn>
 
-    <TemplateColumn Title="Transaction Amount" Context="transfer" Sortable="true">
-        @transfer.amount.ToString("C")
-    </TemplateColumn>
+        <TemplateColumn Title="Transaction Date" Context="transfer" Sortable="true">
+            @transfer.date.ToString("MM/dd/yyyy")
+        </TemplateColumn>
 
-    <TemplateColumn Title="Transaction Date" Context="transfer" Sortable="true">
-        @transfer.date.ToString("MM/dd/yyyy")
-    </TemplateColumn>
-
-    <TemplateColumn Title="Memo" Context="transfer" Sortable="true">
-        @transfer.description
-    </TemplateColumn>
-
-    <TemplateColumn Context="transfer">
-        <a href="@($"transfers/details?transactionid={transfer.transactionID}")">Details</a> | 
-        <a href="@($"transfers/edit?transactionid={transfer.transactionID}")">Edit</a>
-    </TemplateColumn>
-</QuickGrid>
-
+        <TemplateColumn Context="transfer">
+            <a href="@($"transfers/details?transactionid={transfer.transactionID}")">Details</a> |
+            <a href="@($"transfers/edit?transactionid={transfer.transactionID}")">Edit</a>
+        </TemplateColumn>
+    </QuickGrid>
+</div>
 
 @code {
     private BisonBankContext context = default!;
@@ -53,3 +53,39 @@
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
 }
+
+<style>
+    .paper-style {
+        background-color: #fff; /* White background to simulate paper */
+        border: 1px solid #ccc; /* Light gray border for the paper outline */
+        border-radius: 8px; /* Slight rounding for the corners */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        padding: 20px; /* Padding inside the paper */
+        margin: 20px auto; /* Centering and spacing */
+        max-width: 1200px; /* Limit the width to make it look like a page */
+        font-family: 'Arial', sans-serif; /* Clean font for readability */
+        position: relative; /* This is required for the absolute positioning of the statement period */
+    }
+
+    .transaction-grid {
+        width: 100%; /* Ensure the grid takes up the full width of the container */
+        table-layout: fixed; /* Prevent table overflow */
+        border-collapse: collapse; /* Ensures no double borders */
+    }
+
+    .transaction-grid th, .transaction-grid td {
+        padding: 0px; /* Add padding to the cells */
+        text-align: left; /* Align text to the left */
+        border-bottom: 1px solid #ddd; /* Add a light border for separation */
+    }
+
+    .transaction-grid th {
+        background-color: #f0f0f0; /* Light gray background for column headers */
+        font-weight: bold;
+        text-align: left;
+    }
+
+    .transaction-grid td {
+        text-align: left; /* Center align the data */
+    }
+</style>

@@ -10,29 +10,31 @@
 
 <h1>Accounts</h1>
 
-<QuickGrid Class="my-grid" Items="context.Account">
+<div class="paper-style">
+    <QuickGrid Items="context.Account" TGridItem="Account" Class="transaction-grid">
 
-    <TemplateColumn Title="Account Number" Context="account" Sortable="true">
-        @account.accountNumber
-    </TemplateColumn>
+        <TemplateColumn Title="Account Number" Context="account" Sortable="true">
+            @account.accountNumber
+        </TemplateColumn>
 
-    <TemplateColumn Title="Routing Number" Context="account" Sortable="true">
-        @account.routingNumber
-    </TemplateColumn>
+        <TemplateColumn Title="Routing Number" Context="account" Sortable="true">
+            @account.routingNumber
+        </TemplateColumn>
 
-    <TemplateColumn Title="Balance" Context="account" Sortable="true">
-        @account.balance.ToString("C")
-    </TemplateColumn>
+        <TemplateColumn Title="Balance" Context="account" Sortable="true">
+            @account.balance.ToString("C")
+        </TemplateColumn>
 
-    <TemplateColumn Title="Interest Rate" Context="account" Sortable="true">
-        @account.interest
-    </TemplateColumn>
+        <TemplateColumn Title="Interest Rate" Context="account" Sortable="true">
+            @account.interest
+        </TemplateColumn>
 
-    <TemplateColumn Title="Account Opened" Context="account" Sortable="true">
-        @account.dateCreated.ToString("MM/dd/yyyy")
-    </TemplateColumn>
+        <TemplateColumn Title="Account Opened" Context="account" Sortable="true">
+            @account.dateCreated.ToString("MM/dd/yyyy")
+        </TemplateColumn>
 
-</QuickGrid>
+    </QuickGrid>
+</div>
 
 @code {
     private BisonBankContext context = default!;
@@ -44,3 +46,39 @@
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
 }
+
+<style>
+    .paper-style {
+        background-color: #fff; /* White background to simulate paper */
+        border: 1px solid #ccc; /* Light gray border for the paper outline */
+        border-radius: 8px; /* Slight rounding for the corners */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        padding: 20px; /* Padding inside the paper */
+        margin: 20px auto; /* Centering and spacing */
+        max-width: 1200px; /* Limit the width to make it look like a page */
+        font-family: 'Arial', sans-serif; /* Clean font for readability */
+        position: relative; /* This is required for the absolute positioning of the statement period */
+    }
+
+    .transaction-grid {
+        width: 100%; /* Ensure the grid takes up the full width of the container */
+        table-layout: fixed; /* Prevent table overflow */
+        border-collapse: collapse; /* Ensures no double borders */
+    }
+
+    .transaction-grid th, .transaction-grid td {
+        padding: 0px; /* Add padding to the cells */
+        text-align: left; /* Align text to the left */
+        border-bottom: 1px solid #ddd; /* Add a light border for separation */
+    }
+
+    .transaction-grid th {
+        background-color: #f0f0f0; /* Light gray background for column headers */
+        font-weight: bold;
+        text-align: left;
+    }
+
+    .transaction-grid td {
+        text-align: left; /* Center align the data */
+    }
+</style>

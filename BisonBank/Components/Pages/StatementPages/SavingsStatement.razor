@@ -14,9 +14,13 @@
 <PageTitle>Savings Statement</PageTitle>
 <h1>Savings Statement</h1>
 
+<header class="page-header">
+    <h1>Savings Statement</h1>
+</header>
+
 <div class="paper-style">
     <div class="bank-info">
-        <h2>Bison Bank</h2>
+        <img src="Images/bison_bank_logo.png" alt="Bison Bank Logo" class="bison-logo" />
         <p>1234 Main Street, Fargo, ND 58103</p>
         <p>Phone: (555) 123-4567</p>
     </div>
@@ -26,9 +30,9 @@
     </div>
 
     <div class="account-holder-info">
-        <strong>Account Holder:</strong><br />
-        John Doe<br />
-        456 Elm Street<br />
+        <strong>Account Holder:</strong><br>
+        John Doe<br>
+        456 Elm Street<br>
         Fargo, ND 58103
     </div>
 
@@ -37,11 +41,6 @@
         <!-- Date Column -->
         <TemplateColumn Title="Date" Context="transaction" Sortable="true">
             @transaction.date.ToString("MM/dd/yyyy")
-        </TemplateColumn>
-
-        <!-- Description Column -->
-        <TemplateColumn Title="Description" Context="transaction" Sortable="true">
-            @transaction.description
         </TemplateColumn>
 
         <!-- Transaction Type Column -->
@@ -62,11 +61,17 @@
         </TemplateColumn>
 
     </QuickGrid>
+
+    <div class="totals-row">
+        <span>Total Balance: @AccountBalance.ToString("C")</span>
+    </div>
 </div>
 
 @code {
     private BisonBankContext context = default!;
     private IQueryable<Transaction> FilteredTransactions = Enumerable.Empty<Transaction>().AsQueryable();
+    private Account SavingsAccount = new Account();
+    private decimal AccountBalance = 0.0m;
 
     protected override async Task OnInitializedAsync()
     {
@@ -76,6 +81,21 @@
         FilteredTransactions = context.Transaction
                                       .Where(t => t.originAccount == "Savings" || t.destinationAccount == "Savings")
                                       .OrderBy(t => t.date);
+
+        // Get the savings account
+        try
+        {
+            SavingsAccount = context.Account
+                            .Where(a => a.accountType == "Savings")
+                            .FirstOrDefault() ?? new Account();
+        }
+        catch (Exception ex)
+        {
+            throw new NullReferenceException("No Savings Account listed under current user.");
+        }
+
+        // Get the accounts current balance
+        AccountBalance = SavingsAccount.balance;
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
@@ -91,5 +111,75 @@
         margin: 20px auto; /* Centering and spacing */
         max-width: 800px; /* Limit the width to make it look like a page */
         font-family: 'Arial', sans-serif; /* Clean font for readability */
+        position: relative; /* Relative positioning for internal alignment */
+        overflow: hidden; /* Ensure no overflow outside the container */
+    }
+
+    .quickgrid {
+        width: 100%; /* Make the table take up the full width of the parent container */
+        border-collapse: collapse; /* Collapse borders for a clean look */
+    }
+
+        .quickgrid tr:nth-child(odd) {
+            background-color: #f9f9f9; /* Light gray for odd rows */
+        }
+
+        .quickgrid tr:nth-child(even) {
+            background-color: #fff; /* White for even rows */
+        }
+
+        .quickgrid tr {
+            border-bottom: 1px solid #ccc; /* Add a line between rows */
+        }
+
+        .quickgrid th {
+            background-color: #f0f0f0; /* Light gray background for headers */
+            font-weight: bold;
+            border-bottom: 2px solid #ccc; /* Distinguish header row with a thicker line */
+        }
+
+
+
+    .account-holder-info {
+        margin-bottom: 20px;
+    }
+
+    .statement-info {
+        position: absolute; /* Position it absolutely within the paper-style container */
+        top: 30px; /* Adjust space from the top */
+        right: 20px; /* Adjust space from the right */
+        font-size: 16px; /* Adjust font size */
+        font-weight: bold; /* Make the statement period bold */
+        z-index: 1; /* Ensure it's above other elements */
+    }
+
+    .totals-row {
+        background-color: #f0f0f0; /* gray shading*/
+        font-weight: bold;
+        border-top: 2px solid black; /* Black line above the totals row */
+        border-bottom: 1px solid #ccc; /* Add a bottom border to match the grid */
+        padding: 10px;
+        text-align: right;
+        display: flex;
+        justify-content: flex-end; /* Align the content to the right */
+        margin-top: 10px; /* Add some spacing from the last row */
+        width: 100%;
+    }
+
+    .totals-row span{
+        margin-right: 10px;
+    }
+
+    .page-header {
+        margin-bottom: 50px; /* Adjust this value to control the spacing */
+        text-align: center;
+    }
+
+    .bison-logo{
+        width: 200px;
+        height: auto;
+        display: block;
+        margin-bottom: 10px;
+        filter: grayscale(100%);
     }
 </style>
