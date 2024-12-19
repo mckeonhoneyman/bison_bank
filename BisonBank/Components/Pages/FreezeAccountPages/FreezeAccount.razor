@@ -1,8 +1,39 @@
 ﻿@page "/freeze_account"
 @using Microsoft.EntityFrameworkCore
+@rendermode InteractiveServer
 
 <h3>Freeze Account</h3>
 
-@code {
+<label for="accounts">Choose an account:</label>
 
+<select id="accounts">
+    <option value="checking">Checking: 10001</option>
+    <option value="savings">Savings:20001</option>
+</select>
+
+<div>
+<button @onclick="myalert">
+    Freeze
+</button>
+
+<button @onclick="myalert2"> 
+    Unfreeze
+</button>
+</div>
+
+<hr />
+
+<div> @Message</div>
+
+@code {
+    string Message{ get; set; }
+
+    void myalert()
+    {
+        Message = "Account has been Frozen.";
+    }
+    void myalert2()
+    {
+        Message = "Account has been Unfrozen.";
+    }
 }
